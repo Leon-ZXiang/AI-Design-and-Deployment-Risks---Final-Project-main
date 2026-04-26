@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(python test_api.py)",
+      "Bash(python run_demo.py)"
     ]
   }
 }

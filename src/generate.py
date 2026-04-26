@@ -91,13 +91,12 @@ def _read_api_file() -> dict[str, str]:
     return out
 
 
-def _openrouter_response(source_text: str) -> GenerationResult:
+def _openrouter_response(source_text: str, *, max_retries: int = 5, base_delay: float = 5.0) -> GenerationResult:
     try:
-        from openai import OpenAI  # type: ignore
+        import requests  # type: ignore
+        import time
     except ImportError as e:
-        raise RuntimeError(
-            "openrouter mode requires `pip install -r requirements-openai.txt`"
-        ) from e
+        raise RuntimeError("openrouter mode requires `pip install requests`") from e
 
     creds = _read_api_file()
     api_key = os.environ.get("OPENROUTER_API_KEY") or creds.get("key")
@@ -107,15 +106,32 @@ def _openrouter_response(source_text: str) -> GenerationResult:
             "no OpenRouter API key found in API.txt or OPENROUTER_API_KEY env"
         )
 
-    client = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=api_key)
     prompt = f"{SYSTEM_PROMPT}\n\n---\nSOURCE:\n{source_text}"
-    completion = client.chat.completions.create(
-        model=model,
-        messages=[
+    payload = {
+        "model": model,
+        "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": f"SOURCE:\n{source_text}"},
         ],
-        temperature=0.2,
-    )
-    response = (completion.choices[0].message.content or "").strip()
-    return GenerationResult(prompt=prompt, response=response, model=model)
+        "temperature": 0.2,
+    }
+
+    for attempt in range(max_retries):
+        resp = requests.post(
+            url=f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}"},
+            json=payload,
+        )
+        if resp.status_code == 429:
+            wait = base_delay * (2 ** attempt)
+            retry_after = resp.headers.get("Retry-After")
+            if retry_after:
+                wait = max(wait, float(retry_after))
+            print(f"[openrouter] rate limited, retrying in {wait:.0f}s (attempt {attempt + 1}/{max_retries})...")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        response = (resp.json()["choices"][0]["message"]["content"] or "").strip()
+        return GenerationResult(prompt=prompt, response=response, model=model)
+
+    raise RuntimeError(f"OpenRouter rate limit exceeded after {max_retries} retries")
