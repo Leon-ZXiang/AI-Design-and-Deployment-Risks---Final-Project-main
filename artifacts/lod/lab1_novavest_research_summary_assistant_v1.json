@@ -1,0 +1,85 @@
+{
+    "model_name": "NovaVest Research Summary Assistant v1",
+    "business_use": "This system is designed to support junior internal analysts at NovaVest Research by generating first-draft financial research summaries from public company disclosures, especially recent 10-Q filings and earnings-call transcripts. The objective is to improve analyst efficiency while keeping a governed review-and-release workflow. The system is not intended to execute trades, provide autonomous investment advice, or publish research without human review.",
+    "domain": "Compliance",
+    "model_type": "Other",
+    "decision_criticality": "High",
+    "data_sensitivity": "Internal",
+    "automation_level": "Human-in-the-loop",
+    "deployment_mode": "Batch",
+    "regulatory_materiality": "High",
+    "owner_team": null,
+    "model_stage": "Pre-Production",
+    "deployment_region": null,
+    "model_id": "384cca19-7811-426c-9254-430029e73c6f",
+    "created_at": "2026-04-26T01:26:50.136746+00:00",
+    "created_by": "System/Unknown Owner",
+    "lab_version": "1.0",
+    "inherent_risk_score": 15,
+    "proposed_risk_tier": "Tier 2",
+    "proposed_tier_description": "Medium Risk: Moderate impact, requires standard MRM oversight.",
+    "score_breakdown": {
+        "decision_criticality": {
+            "value": "High",
+            "points": 5
+        },
+        "data_sensitivity": {
+            "value": "Internal",
+            "points": 2
+        },
+        "automation_level": {
+            "value": "Human-in-the-loop",
+            "points": 3
+        },
+        "regulatory_materiality": {
+            "value": "High",
+            "points": 5
+        }
+    },
+    "scoring_config": {
+        "scoring_version": "v1.0",
+        "risk_scoring_table": {
+            "decision_criticality": {
+                "Low": 1,
+                "Medium": 3,
+                "High": 5
+            },
+            "data_sensitivity": {
+                "Public": 1,
+                "Internal": 2,
+                "Confidential": 3,
+                "Regulated-PII": 5
+            },
+            "automation_level": {
+                "Manual": 1,
+                "Human-in-the-loop": 3,
+                "Fully-Automated": 5
+            },
+            "regulatory_materiality": {
+                "None": 1,
+                "Low": 2,
+                "Medium": 4,
+                "High": 5
+            }
+        },
+        "tier_thresholds": {
+            "Tier 1": {
+                "min_score": 16,
+                "description": "High Risk: Significant impact, requires extensive MRM oversight."
+            },
+            "Tier 2": {
+                "min_score": 9,
+                "description": "Medium Risk: Moderate impact, requires standard MRM oversight."
+            },
+            "Tier 3": {
+                "min_score": 0,
+                "description": "Low Risk: Minimal impact, well-understood, or highly controlled."
+            }
+        }
+    },
+    "scoring_version": "v1.0",
+    "owner_risk_narrative": "NovaVest Research Summary Assistant v1 is an internal AI-assisted workflow that helps junior analysts create first-draft financial research summaries from public company disclosures such as 10-Q filings and earnings-call transcripts. The workflow does not execute trades or publish content automatically, but it still creates meaningful risk because the model may generate unsupported financial claims, omit important risk disclosures, or rely on incomplete source material. Since the output may influence internal research judgment and downstream investor-facing summaries, the system requires structured review, source-grounding checks, and controlled release decisions before any use beyond draft support.",
+    "mitigations_proposed": "Proposed mitigations include mandatory human-in-the-loop review before release, source provenance and freshness checks, grounding review for material claims, a checklist for major risk-factor coverage, and a formal approve/revise/block/escalate decision for each evaluated case. The workflow should also maintain an evidence pack containing source documents, generated summaries, reviewer notes, and final release decisions. Prompt and workflow version tracking should be recorded to support traceability and later audit review.",
+    "open_questions": "Key follow-up questions include whether the workflow should remain Tier 2 or be escalated to Tier 1 under a stricter financial-governance interpretation, how second-line review will be structured in practice, and what minimum evidence should be required before an output can be approved. Additional follow-up is also needed on the exact release criteria for unsupported claims, missing material risks, and stale source usage. If the workflow expands beyond internal analyst support into broader investor-facing use, the control structure and monitoring requirements would need to be strengthened.",
+    "export_format_version": "lab1_export_v1"
+}

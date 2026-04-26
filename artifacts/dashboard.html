@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>NovaVest Research Summary Assistant v1 — Governance Dashboard</title>
+<style>
+  body { font-family: -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f5f6f8; color: #1f2933; }
+  header { background: #1f2933; color: white; padding: 24px 32px; }
+  header h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  header .sub { opacity: 0.7; font-size: 13px; margin-top: 4px; }
+  header .definition { margin-top: 14px; max-width: 980px; font-size: 13px; line-height: 1.55; opacity: 0.92; border-left: 3px solid #64748b; padding-left: 12px; }
+  main { padding: 24px 32px; max-width: 1400px; }
+  section { background: white; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  section h2 { margin: 0 0 16px; font-size: 16px; font-weight: 600; color: #334155; }
+  .tiles { display: flex; gap: 12px; flex-wrap: wrap; }
+  .tile { flex: 1; min-width: 140px; padding: 16px; border-radius: 8px; background: #f8fafc; border-left: 4px solid #94a3b8; }
+  .tile-n { font-size: 28px; font-weight: 600; }
+  .tile-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; margin-top: 4px; }
+  .status-approved  { border-left-color: #16a34a; }
+  .status-revise    { border-left-color: #f59e0b; }
+  .status-rejected  { border-left-color: #dc2626; }
+  .status-escalated { border-left-color: #d97706; }
+  .status-pending   { border-left-color: #2563eb; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; background: #e2e8f0; color: #334155; }
+  .pill.status-approved  { background: #dcfce7; color: #15803d; }
+  .pill.status-revise    { background: #fef9c3; color: #a16207; }
+  .pill.status-rejected  { background: #fee2e2; color: #b91c1c; }
+  .pill.status-escalated { background: #fed7aa; color: #c2410c; }
+  .pill.status-pending   { background: #dbeafe; color: #1d4ed8; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  th { background: #f8fafc; font-weight: 600; color: #475569; font-size: 12px; text-transform: uppercase; letter-spacing: 0.3px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  td.pass { color: #15803d; font-weight: 600; }
+  td.fail { color: #b91c1c; font-weight: 600; }
+  td.notes { max-width: 320px; font-size: 12px; color: #475569; }
+  code { font-family: ui-monospace, "Cascadia Code", monospace; font-size: 12px; color: #475569; }
+  .empty { text-align: center; padding: 32px; color: #94a3b8; }
+  .lod-list { list-style: none; padding: 0; margin: 0; columns: 2; column-gap: 32px; }
+  .lod-list li { padding: 6px 0; break-inside: avoid; }
+  .lod-list a { color: #2563eb; text-decoration: none; }
+  .lod-list a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<header>
+  <h1>NovaVest Research Summary Assistant v1 — Governance Dashboard</h1>
+  <div class="sub">Generated 2026-04-26 17:52 UTC · 3 runs</div>
+  <div class="definition">NovaVest Research Summary Assistant v1 is a governed AI-assisted financial research summary workflow for internal analysts. It uses public company disclosures to generate first-draft summaries, and every output must pass control checks, review, and release decisions before it can be used beyond draft support.</div>
+</header>
+<main>
+  <section>
+    <h2>Release outcomes</h2>
+    <div class="tiles"><div class="tile status-approved">
+              <div class="tile-n">1</div>
+              <div class="tile-label">APPROVED</div>
+            </div><div class="tile status-escalated">
+              <div class="tile-n">1</div>
+              <div class="tile-label">ESCALATED</div>
+            </div><div class="tile status-revise">
+              <div class="tile-n">1</div>
+              <div class="tile-label">REVISE</div>
+            </div></div>
+  </section>
+
+  <section>
+    <h2>Automated checks</h2>
+    <table>
+      <thead><tr><th>Control</th><th class="num">Runs</th><th class="num">Pass</th><th class="num">Fail</th><th class="num">Pass rate</th></tr></thead>
+      <tbody><tr>
+              <td>C1.1 — Source-grounding check</td>
+              <td class="num">3</td>
+              <td class="num pass">3</td>
+              <td class="num fail">0</td>
+              <td class="num">100%</td>
+            </tr><tr>
+              <td>C2.1 — Risk-factor coverage check</td>
+              <td class="num">3</td>
+              <td class="num pass">1</td>
+              <td class="num fail">2</td>
+              <td class="num">33%</td>
+            </tr><tr>
+              <td>C3.1 — Source freshness validation</td>
+              <td class="num">3</td>
+              <td class="num pass">3</td>
+              <td class="num fail">0</td>
+              <td class="num">100%</td>
+            </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Human sign-offs</h2>
+    <table>
+      <thead><tr><th>Control</th><th class="num">Runs</th><th class="num">Signed</th><th class="num">Pending</th><th class="num">Sign-off rate</th></tr></thead>
+      <tbody><tr>
+              <td>C1.2 — Reviewer claim verification</td>
+              <td class="num">3</td>
+              <td class="num pass">1</td>
+              <td class="num fail">2</td>
+              <td class="num">33%</td>
+            </tr><tr>
+              <td>C4.2 — Analyst sign-off before release</td>
+              <td class="num">3</td>
+              <td class="num pass">1</td>
+              <td class="num fail">2</td>
+              <td class="num">33%</td>
+            </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Recent runs</h2>
+    <table>
+      <thead><tr><th>Run</th><th>Company</th><th>Filing date</th><th>Status</th><th class="num">Grounding</th><th class="num">Age (d)</th><th>Missing categories</th><th>Routing reasons</th><th>Reviewer</th><th>Reviewer notes</th></tr></thead>
+      <tbody><tr>
+              <td><code>run-20260426T174445Z-ed9ec3</code></td>
+              <td>NVIDIA Corporation</td>
+              <td>2026-02-22</td>
+              <td><span class="pill status-escalated">ESCALATED</span></td>
+              <td class="num">1.0</td>
+              <td class="num">63</td>
+              <td>litigation, forward_guidance, regulatory</td>
+              <td>missing_required_categories&gt;=3</td>
+              <td>—</td>
+              <td class="notes">Source omits multiple material risk categories. Issue cannot be cleared in the normal review path — escalate to senior research review.</td>
+            </tr><tr>
+              <td><code>run-20260426T174445Z-7b73b7</code></td>
+              <td>Microsoft Corporation</td>
+              <td>2026-02-28</td>
+              <td><span class="pill status-approved">APPROVED</span></td>
+              <td class="num">1.0</td>
+              <td class="num">57</td>
+              <td>—</td>
+              <td>—</td>
+              <td>jsmith</td>
+              <td class="notes">—</td>
+            </tr><tr>
+              <td><code>run-20260426T174445Z-7797a1</code></td>
+              <td>Apple Inc.</td>
+              <td>2026-02-15</td>
+              <td><span class="pill status-revise">REVISE</span></td>
+              <td class="num">1.0</td>
+              <td class="num">70</td>
+              <td>regulatory</td>
+              <td>missing_one_required_category</td>
+              <td>—</td>
+              <td class="notes">Draft is mostly grounded but does not cover regulatory exposure. Add the missing category before approval.</td>
+            </tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Lab-based governance artifacts (LoD1 / LoD2 / LoD3)</h2>
+    <ul class='lod-list'><li><a href='../artifacts/lod/384cca19-7811-426c-9254-430029e73c6f_executive_summary.md'><code>384cca19-7811-426c-9254-430029e73c6f_executive_summary.md</code></a></li><li><a href='../artifacts/lod/384cca19-7811-426c-9254-430029e73c6f_required_controls_checklist.json'><code>384cca19-7811-426c-9254-430029e73c6f_required_controls_checklist.json</code></a></li><li><a href='../artifacts/lod/384cca19-7811-426c-9254-430029e73c6f_risk_tiering.json'><code>384cca19-7811-426c-9254-430029e73c6f_risk_tiering.json</code></a></li><li><a href='../artifacts/lod/audit_findings.json'><code>audit_findings.json</code></a></li><li><a href='../artifacts/lod/audit_findings_report.md'><code>audit_findings_report.md</code></a></li><li><a href='../artifacts/lod/lab1_novavest_research_summary_assistant_v1.json'><code>lab1_novavest_research_summary_assistant_v1.json</code></a></li></ul>
+  </section>
+</main>
+</body>
+</html>

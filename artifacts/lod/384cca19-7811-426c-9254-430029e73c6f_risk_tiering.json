@@ -1,0 +1,42 @@
+{
+    "model_id": "384cca19-7811-426c-9254-430029e73c6f",
+    "model_name": "NovaVest Research Summary Assistant v1",
+    "official_risk_score": 28,
+    "official_risk_tier": "Tier 1",
+    "score_breakdown": {
+        "decision_criticality": {
+            "value_matched": "High - Direct impact on customer financial outcomes and regulatory compliance",
+            "points": 10
+        },
+        "data_sensitivity": {
+            "value_matched": "Sensitive - Non-regulated PII or confidential business data",
+            "points": 5
+        },
+        "automation_level": {
+            "value_matched": "Semi-Automated - Model output requires human review before decision",
+            "points": 4
+        },
+        "regulatory_materiality": {
+            "value_matched": "High - Directly impacts credit risk capital and regulatory reporting (e.g., CECL)",
+            "points": 9
+        }
+    },
+    "tier_thresholds_used": {
+        "Tier 1": {
+            "min_score": 22,
+            "max_score": Infinity
+        },
+        "Tier 2": {
+            "min_score": 15,
+            "max_score": 21
+        },
+        "Tier 3": {
+            "min_score": 0,
+            "max_score": 14
+        }
+    },
+    "tiering_logic_version": "Apex Financial_MRM_Tiering_v2.1",
+    "mrm_lead_rationale_plain_english": "The model 'NovaVest Research Summary Assistant v1' (384cca19-7811-426c-9254-430029e73c6f) has been assigned an official risk tier of **Tier 1** with a total risk score of **28**. This decision is based on the following factors as per Apex Financial's official tiering logic (version Apex Financial_MRM_Tiering_v2.1):\n  - 'Decision Criticality' is 'High - Direct impact on customer financial outcomes and regulatory compliance' contributing 10 points.\n- 'Data Sensitivity' is 'Sensitive - Non-regulated PII or confidential business data' contributing 5 points.\n- 'Automation Level' is 'Semi-Automated - Model output requires human review before decision' contributing 4 points.\n- 'Regulatory Materiality' is 'High - Directly impacts credit risk capital and regulatory reporting (e.g., CECL)' contributing 9 points.\nThe total score of 28 falls within the range for 'Tier 1'.",
+    "date_tiered": "2026-04-26",
+    "tiered_by": "MRM Lead (via Lab 2 Tiering Logic)"
+}

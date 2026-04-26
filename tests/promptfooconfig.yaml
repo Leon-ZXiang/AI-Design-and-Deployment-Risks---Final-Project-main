@@ -1,0 +1,102 @@
+# Promptfoo test suite for the frozen NovaVest sample cases.
+#
+# Run from the project root:
+#     promptfoo eval -c tests/promptfooconfig.yaml
+#
+# Install promptfoo first:  npm install -g promptfoo
+#
+# This config does NOT call any LLM. The provider is a local Python script
+# (tests/promptfoo_provider.py) that runs our stub workflow end-to-end and
+# returns the result as JSON, which the assertions below parse.
+
+description: "NovaVest release-review governance — frozen sample cases"
+
+providers:
+  - id: file://promptfoo_provider.py
+    label: stub-workflow
+
+# No real prompt template — the workflow is driven by `source` / signoff vars
+# passed through `context.vars`. We keep a placeholder so promptfoo is happy.
+prompts:
+  - "Release review for {{scenario}}"
+
+# Shared assertion: the provider must return valid JSON with a `final_status`.
+defaultTest:
+  assert:
+    - type: is-json
+    - type: javascript
+      value: |
+        const r = JSON.parse(output);
+        return typeof r.final_status === 'string' && r.run_id && r.evidence_path;
+
+tests:
+  - description: "Case 1 — Microsoft — APPROVED"
+    vars:
+      scenario: microsoft
+      source: data/sources/microsoft_10q_excerpt.md
+      analyst: jsmith
+      senior: kpatel
+    assert:
+      - type: javascript
+        value: |
+          const r = JSON.parse(output);
+          if (r.final_status !== 'APPROVED')
+            return `expected APPROVED, got ${r.final_status}`;
+          const ctrls = r.control_results || [];
+          const allChecksPassed = ctrls
+            .filter(c => c.kind === 'check')
+            .every(c => c.passed === true);
+          if (!allChecksPassed) return 'one or more automated checks failed';
+          const humansSigned = ctrls
+            .filter(c => c.kind === 'human')
+            .every(c => c.passed === true);
+          if (!humansSigned) return 'missing human sign-off on Microsoft case';
+          return true;
+
+  - description: "Case 2 — Apple — REVISE (one risk category missing)"
+    vars:
+      scenario: apple
+      source: data/sources/apple_10q_excerpt.md
+      analyst: ""
+      senior: ""
+    assert:
+      - type: javascript
+        value: |
+          const r = JSON.parse(output);
+          if (r.final_status !== 'REVISE')
+            return `expected REVISE, got ${r.final_status}`;
+          const coverage = (r.control_results || [])
+            .find(c => c.control_id === 'C2.1');
+          const missing = (coverage && coverage.missing_categories) || [];
+          if (missing.length !== 1)
+            return `expected exactly 1 missing category, got ${missing.length}`;
+          const routing = (r.control_results || [])
+            .find(c => c.control_id === 'C6.1');
+          if (!routing || routing.revise !== true)
+            return 'C6.1 should set revise=true for REVISE outcome';
+          return true;
+
+  - description: "Case 3 — Nvidia — ESCALATED (multiple categories missing)"
+    vars:
+      scenario: nvidia
+      source: data/sources/nvidia_10q_excerpt.md
+      analyst: ""
+      senior: ""
+    assert:
+      - type: javascript
+        value: |
+          const r = JSON.parse(output);
+          if (r.final_status !== 'ESCALATED')
+            return `expected ESCALATED, got ${r.final_status}`;
+          const coverage = (r.control_results || [])
+            .find(c => c.control_id === 'C2.1');
+          const missing = (coverage && coverage.missing_categories) || [];
+          if (missing.length < 2)
+            return `expected >=2 missing categories, got ${missing.length}`;
+          const routing = (r.control_results || [])
+            .find(c => c.control_id === 'C6.1');
+          if (!routing || routing.escalated !== true)
+            return 'C6.1 routing should have fired';
+          if (routing.escalation_target !== 'senior_research_reviewer')
+            return `unexpected escalation target: ${routing.escalation_target}`;
+          return true;

@@ -1,0 +1,148 @@
+# Control Matrix — NovaVest Research Summary Assistant v1
+# Frozen 7-control set per the final NovaVest spec (governance report §5).
+# Each risk traces to Section 4 of the governance report (Risk Framing).
+# Each control names the lifecycle stage it operates in, the owner, the
+# evidence it produces, and whether it is a hard gate (blocks release on
+# fail), a soft gate (revise/escalate path), or a required control.
+
+version: 2
+entity: NovaVest Research Summary Assistant v1
+
+risks:
+  - id: R1
+    name: Unsupported financial claims
+    lifecycle_stages: [generation, review, release]
+    why_it_matters: >
+      The assistant may state revenue trends, guidance, or business facts not
+      supported by the source filing or transcript. Even one unsupported
+      material claim can mislead research users.
+    controls:
+      - id: C1.1
+        name: Source-grounding check
+        module: src.controls.grounding
+        stage: review
+        owner: system
+        gate: hard
+        pass_threshold: 0.90
+        evidence_fields: [grounding_score, unsupported_sentences]
+      - id: C1.2
+        name: Reviewer claim verification
+        stage: review
+        owner: senior_reviewer
+        gate: hard
+        evidence_fields: [reviewer_id, reviewer_decision, reviewer_notes]
+
+  - id: R2
+    name: Omission of material risk factors
+    lifecycle_stages: [generation, review]
+    why_it_matters: >
+      The assistant may produce a fluent summary while missing important
+      disclosures such as litigation, liquidity pressure, margin decline, or
+      weak forward guidance. Missing one important category routes to REVISE;
+      missing several routes to ESCALATE.
+    controls:
+      - id: C2.1
+        name: Risk-factor coverage check
+        module: src.controls.risk_coverage
+        stage: review
+        owner: system
+        gate: soft
+        required_categories:
+          - litigation
+          - liquidity
+          - margin_pressure
+          - forward_guidance
+          - regulatory
+        evidence_fields: [coverage_map, missing_categories]
+
+  - id: R3
+    name: Stale or incomplete source data
+    lifecycle_stages: [ingestion, preprocessing, generation]
+    why_it_matters: >
+      The assistant may rely on outdated filings or incomplete transcripts,
+      creating misleading but polished outputs.
+    controls:
+      - id: C3.1
+        name: Source freshness validation
+        module: src.controls.freshness
+        stage: ingestion
+        owner: system
+        gate: hard
+        max_age_days: 120
+        evidence_fields: [source_date, source_age_days, freshness_pass]
+
+  - id: R4
+    name: Over-reliance on AI-generated summaries
+    lifecycle_stages: [use, review, release]
+    why_it_matters: >
+      Analysts or downstream users may trust the AI output too quickly because
+      it appears confident and professional. The frozen control set requires
+      a final analyst sign-off before any output is used beyond draft support.
+    controls:
+      - id: C4.2
+        name: Analyst sign-off before release
+        stage: release
+        owner: analyst
+        gate: hard
+        evidence_fields: [analyst_id, signoff_timestamp]
+
+  - id: R5
+    name: Weak traceability and auditability
+    lifecycle_stages: [review, release, monitoring]
+    why_it_matters: >
+      Without evidence of sources, prompts, reviewer decisions, and approval
+      records, the workflow cannot be defended in audit or incident review.
+    controls:
+      - id: C5.1
+        name: Evidence-pack capture
+        module: src.evidence
+        stage: review
+        owner: system
+        gate: required
+        evidence_fields:
+          - run_id
+          - created_at
+          - source_documents
+          - prompt
+          - response
+          - control_results
+          - reviewer_id
+          - reviewer_decision
+          - escalation
+          - final_status
+
+  - id: R6
+    name: Inadequate escalation and incident response
+    lifecycle_stages: [monitoring, operate]
+    why_it_matters: >
+      If a harmful or misleading summary is detected, the organization needs
+      a defined response process instead of ad hoc judgment.
+    controls:
+      - id: C6.1
+        name: Escalation routing
+        module: src.review
+        stage: review
+        owner: system
+        gate: soft
+        escalation_triggers:
+          - grounding_score_below: 0.80
+          - unsupported_claim_count_above: 0
+        evidence_fields: [escalated, escalation_reasons, escalation_target]
+
+# Frozen spec §6 release-gate logic (Approve / Revise / Reject / Escalate).
+# REVISE vs ESCALATE is decided by severity of the soft-fail: a single
+# missing category can be corrected by the reviewer (revise); multiple
+# missing categories or any C6.1 trigger means the issue is material or
+# unresolved and must go to a higher review level (escalate).
+release_gates:
+  approve_requires:
+    - all_hard_gates_pass: true
+    - analyst_signoff: true
+    - senior_reviewer_signoff: true
+  reject_if_any:
+    - hard_gate_fail: true
+  escalate_if_any:
+    - missing_required_categories_count_above: 1
+    - c61_trigger_fired: true
+  revise_if_any:
+    - missing_required_categories_count_equals: 1

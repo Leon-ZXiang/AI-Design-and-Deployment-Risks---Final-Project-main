@@ -1,0 +1,4 @@
+pyyaml>=6.0
+
+# Optional — only needed once src/generate.py mode="openai" is wired up.
+# Install with `pip install -r requirements-openai.txt`.
