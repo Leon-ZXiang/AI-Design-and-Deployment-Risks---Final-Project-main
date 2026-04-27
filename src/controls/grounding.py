@@ -1,14 +1,19 @@
 """C1.1 Source-grounding check (Control Matrix, Risk R1).
 
-Baseline, deterministic implementation: split the draft into sentences, extract
-content tokens (numbers, capitalized multi-word phrases, dollar amounts), and
-check that each token appears in the source text. Sentences whose content
-tokens are all present in the source are considered grounded.
+Two-tier implementation:
 
-This is a stand-in for the LLM-as-judge grounding check that will be added
-once the OpenAI client is wired up in Section 7.
+1. Token matching (always runs): extract numbers, dollar amounts, and
+   capitalized multi-word phrases from each sentence, then check they appear
+   in the source text.  Fast and deterministic.
+
+2. Semantic judge (optional, openrouter mode only): sentences that fail token
+   matching are re-evaluated by an LLM asked to answer YES/NO whether the
+   sentence is a faithful paraphrase of something in the source.  Passed in
+   as a callable so this module stays independent of the HTTP client.
 """
+from __future__ import annotations
 from dataclasses import dataclass, field
+from typing import Callable
 import re
 
 
@@ -27,9 +32,13 @@ _MD_SOURCE_TAG = re.compile(
     r"\(Source:[^)]*\)|\[Source:[^\]]*\]|\*Source:[^*]*\*|Source:\s*[^\n,;.]+",
     re.IGNORECASE,
 )
-# sentences that note the ABSENCE of a section are meta-commentary, not factual claims
+# sentences that note the ABSENCE of information are meta-commentary, not factual claims
 _ABSENCE_NOTICE = re.compile(
-    r"[—\-]\s*(?:no|not)\b|not (?:present|included|provided)\b|limited to\b",
+    r"[—\-]\s*(?:no|not)\b"
+    r"|\bnot (?:present|included|provided|contain|discuss|mention|cover|disclose)\w*\b"
+    r"|\babsence of\b"
+    r"|\bnone (?:disclosed|found|identified|present|provided|mentioned|included)\b"
+    r"|limited to\b",
     re.IGNORECASE,
 )
 
@@ -75,7 +84,11 @@ class GroundingResult:
 
 
 def check_grounding(
-    draft: str, source_text: str, *, pass_threshold: float = 0.90
+    draft: str,
+    source_text: str,
+    *,
+    pass_threshold: float = 0.90,
+    semantic_judge: Callable[[str, str], bool] | None = None,
 ) -> GroundingResult:
     sentences = [s.strip() for s in _SENTENCE_SPLIT.split(draft) if s.strip()]
     source_norm = source_text.lower()
@@ -88,13 +101,19 @@ def check_grounding(
         if not clean:          # pure decoration (heading, hr, empty line)
             supported_count += 1
             continue
+        if _ABSENCE_NOTICE.search(clean):  # LLM reporting what's absent — not a verifiable claim
+            supported_count += 1
+            continue
         tokens = _extract_content_tokens(clean)
         if not tokens:
             supported_count += 1
             continue
-        missing = [t for t in tokens if t.lower() not in source_norm]
+        missing = [t for t in tokens if not _token_in_source(t, source_norm)]
         if missing:
-            unsupported.append(sent)
+            if semantic_judge is not None and semantic_judge(sent, source_text):
+                supported_count += 1  # token mismatch but LLM confirmed grounded
+            else:
+                unsupported.append(sent)
         else:
             supported_count += 1
 

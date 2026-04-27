@@ -11,14 +11,20 @@ Two modes:
 * ``mode="openrouter"`` — calls the OpenRouter chat-completions endpoint
   (OpenAI-compatible API) using the key + model in ``API.txt`` at the
   project root, or the matching ``OPENROUTER_*`` environment variables.
-  Requires ``pip install -r requirements-openai.txt``.
+  Requires ``pip install requests`` (included in requirements.txt).
 
 Generated drafts are always prefixed with the ``DRAFT — not approved for
 release`` label as response-text hygiene (the workflow strips this off
 its own copy of the response when needed).
+
+``make_openrouter_judge()`` returns an LLM-as-judge callable for C1.1:
+given a sentence and source text it returns True when the sentence is a
+faithful paraphrase of something stated in the source.
 """
+from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 import os
 import re
 
@@ -135,3 +141,60 @@ def _openrouter_response(source_text: str, *, max_retries: int = 5, base_delay: 
         return GenerationResult(prompt=prompt, response=response, model=model)
 
     raise RuntimeError(f"OpenRouter rate limit exceeded after {max_retries} retries")
+
+
+_JUDGE_PROMPT = (
+    "Answer only YES or NO — no other text.\n\n"
+    "Is the following sentence a faithful paraphrase of, or directly supported "
+    "by, something explicitly stated in the source text? "
+    "Do not infer or extrapolate — only answer YES if the meaning is clearly "
+    "present in the source.\n\n"
+    "SOURCE:\n{source}\n\n"
+    "SENTENCE:\n{sentence}"
+)
+
+
+def make_openrouter_judge() -> Callable[[str, str], bool]:
+    """Return an LLM-as-judge callable for C1.1 semantic grounding.
+
+    The returned function accepts (sentence, source_text) and returns True
+    when the LLM judges the sentence to be grounded in the source.
+    Uses the same OpenRouter credentials as generate_draft.
+    """
+    try:
+        import requests  # type: ignore
+    except ImportError as e:
+        raise RuntimeError("openrouter mode requires `pip install requests`") from e
+
+    creds = _read_api_file()
+    api_key = os.environ.get("OPENROUTER_API_KEY") or creds.get("key")
+    model = os.environ.get("OPENROUTER_MODEL") or creds.get("model") or DEFAULT_OPENROUTER_MODEL
+    if not api_key:
+        raise RuntimeError(
+            "no OpenRouter API key found in API.txt or OPENROUTER_API_KEY env"
+        )
+
+    def judge(sentence: str, source_text: str) -> bool:
+        payload = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": _JUDGE_PROMPT.format(
+                        source=source_text, sentence=sentence
+                    ),
+                }
+            ],
+            "temperature": 0.0,
+            "max_tokens": 5,
+        }
+        resp = requests.post(
+            url=f"{OPENROUTER_BASE_URL}/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}"},
+            json=payload,
+        )
+        resp.raise_for_status()
+        answer = (resp.json()["choices"][0]["message"]["content"] or "").strip().upper()
+        return answer.startswith("YES")
+
+    return judge

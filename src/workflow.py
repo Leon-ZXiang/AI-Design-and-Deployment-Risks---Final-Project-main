@@ -18,7 +18,7 @@ from pathlib import Path
 
 from .config import load_control_matrix, find_control
 from .ingest import load_source
-from .generate import generate_draft
+from .generate import generate_draft, make_openrouter_judge
 from .controls.grounding import check_grounding
 from .controls.risk_coverage import check_risk_coverage
 from .controls.freshness import check_freshness
@@ -60,10 +60,12 @@ def run(
     gen = generate_draft(source.text, mode=generation_mode)
 
     c11 = find_control(matrix, "C1.1") or {}
+    semantic_judge = make_openrouter_judge() if generation_mode == "openrouter" else None
     grounding = check_grounding(
         gen.response,
         source.text,
         pass_threshold=c11.get("pass_threshold", 0.90),
+        semantic_judge=semantic_judge,
     )
 
     c21 = find_control(matrix, "C2.1") or {}
