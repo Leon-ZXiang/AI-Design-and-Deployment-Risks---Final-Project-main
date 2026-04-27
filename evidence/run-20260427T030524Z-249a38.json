@@ -1,0 +1,89 @@
+{
+  "run_id": "run-20260427T030524Z-249a38",
+  "created_at": "2026-04-27T03:05:24.517211+00:00",
+  "source_documents": [
+    {
+      "path": "d:\\Users\\18569\\OneDrive - George Mason University - O365 Production\\Documents\\Learn\\Courses\\ME575 AI Design and Deployment Risks\\AI-Design-and-Deployment-Risks---Final-Project-main\\data\\sources\\apple_10q_excerpt.md",
+      "company": "Apple Inc.",
+      "ticker": "APPL",
+      "document_type": "10-Q",
+      "filing_date": "2026-02-15"
+    }
+  ],
+  "prompt": "You are an AI research assistant for NovaVest Research. Summarize the attached public filing excerpt. Cover: key financial developments, material risk factors, management guidance, and notable business changes. Cite the source section for every claim. Do not speculate beyond the source text.\n\n---\nSOURCE:\n# Apple Inc. \u2014 Form 10-Q Excerpt (synthetic sample)\n\nFiling date: 2026-02-15\nPeriod ended: 2025-12-27\nSource: synthetic sample created for the NovaVest Research prototype. Not a real SEC filing \u2014 the figures below are illustrative. Used to exercise the REVISE path (one important risk category missing).\n\n## Results of operations\nTotal revenue for the quarter was $124.3 billion, up 4% year over year. iPhone revenue declined 1%, while Services revenue grew 11%. Gross margin was 46.9%, an expansion of 50 basis points driven by Services mix. Operating margin was 31.0%.\n\n## Liquidity and capital resources\nCash, cash equivalents, and marketable securities totaled $172.8 billion at quarter end. The company returned $27.0 billion to shareholders through dividends and buybacks during the quarter. Long-term debt stood at $98.4 billion.\n\n## Risk factors\nThe company is a defendant in patent litigation relating to wireless communications technology. Plaintiffs in the matter are seeking unspecified damages. The litigation is in early stages and the range of loss is not yet determinable.\n\n## Forward guidance\nManagement expects total revenue growth in the low-single-digit range for the next quarter. Services revenue is forecast to continue double-digit growth.\n",
+  "response": "[DRAFT \u2014 not approved for release]\n\nTotal revenue for the quarter was $124.3 billion, up 4% year over year. iPhone revenue declined 1%, while Services revenue grew 11%. Gross margin was 46.9%, an expansion of 50 basis points driven by Services mix. Operating margin was 31.0%.\n\nCash, cash equivalents, and marketable securities totaled $172.8 billion at quarter end. The company returned $27.0 billion to shareholders through dividends and buybacks during the quarter. Long-term debt stood at $98.4 billion.\n\nThe company is a defendant in patent litigation relating to wireless communications technology. Plaintiffs in the matter are seeking unspecified damages. The litigation is in early stages and the range of loss is not yet determinable.\n\nManagement expects total revenue growth in the low-single-digit range for the next quarter. Services revenue is forecast to continue double-digit growth.",
+  "control_results": [
+    {
+      "control_id": "C3.1",
+      "kind": "check",
+      "source_date": "2026-02-15",
+      "source_age_days": 70,
+      "max_age_days": 120,
+      "freshness_pass": true,
+      "passed": true
+    },
+    {
+      "control_id": "C1.1",
+      "kind": "check",
+      "grounding_score": 1.0,
+      "unsupported_sentences": [],
+      "total_sentences": 12,
+      "passed": true
+    },
+    {
+      "control_id": "C2.1",
+      "kind": "check",
+      "coverage_map": {
+        "litigation": true,
+        "liquidity": true,
+        "margin_pressure": true,
+        "forward_guidance": true,
+        "regulatory": false
+      },
+      "missing_categories": [
+        "regulatory"
+      ],
+      "passed": false
+    },
+    {
+      "control_id": "C1.2",
+      "kind": "human",
+      "owner": "senior_reviewer",
+      "signed_by": null,
+      "status": "PENDING_SENIOR_REVIEW",
+      "passed": false
+    },
+    {
+      "control_id": "C4.2",
+      "kind": "human",
+      "owner": "analyst",
+      "signed_by": null,
+      "status": "PENDING_ANALYST_REVIEW",
+      "passed": false
+    },
+    {
+      "control_id": "C6.1",
+      "kind": "routing",
+      "escalated": false,
+      "revise": true,
+      "escalation_reasons": [],
+      "revise_reasons": [
+        "missing_one_required_category"
+      ],
+      "escalation_target": null,
+      "passed": true
+    },
+    {
+      "control_id": "C5.1",
+      "kind": "housekeeping",
+      "evidence_written": true,
+      "note": "evidence pack written for run-20260427T030524Z-249a38",
+      "passed": true
+    }
+  ],
+  "reviewer_id": null,
+  "reviewer_decision": "REVISE",
+  "reviewer_notes": "Draft is mostly grounded but does not cover regulatory exposure. Add the missing category before approval.",
+  "escalation": null,
+  "final_status": "REVISE"
+}

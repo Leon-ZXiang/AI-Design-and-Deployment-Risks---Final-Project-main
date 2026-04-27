@@ -1,0 +1,89 @@
+{
+  "run_id": "run-20260427T030734Z-e74726",
+  "created_at": "2026-04-27T03:07:34.175928+00:00",
+  "source_documents": [
+    {
+      "path": "C:\\Users\\18569\\AppData\\Local\\Temp\\tmpqbezbu4j.md",
+      "company": "Stale Tech Corp",
+      "ticker": "STAL",
+      "document_type": "filing",
+      "filing_date": "2023-03-15"
+    }
+  ],
+  "prompt": "You are an AI research assistant for NovaVest Research. Summarize the attached public filing excerpt. Cover: key financial developments, material risk factors, management guidance, and notable business changes. Cite the source section for every claim. Do not speculate beyond the source text.\n\n---\nSOURCE:\n# Stale Tech Corp \u2014 Form 10-K Excerpt (synthetic sample)\n\nFiling date: 2023-03-15\nPeriod ended: 2022-12-31\nSource: synthetic stale sample for the REJECT smoke test.\n\n## Results of operations\nFull-year revenue was $12.4 billion, up 6% year over year. Gross margin\nwas 38.5%, essentially flat compared with the prior year.\n\n## Risk factors\nPatent litigation continues across multiple jurisdictions. Regulatory\nexposure includes pending antitrust reviews. Margin pressure from\ncomponent pricing remains. Forward guidance is unchanged.\n",
+  "response": "[DRAFT \u2014 not approved for release]\n\nFull-year revenue was $12.4 billion, up 6% year over year. Gross margin\nwas 38.5%, essentially flat compared with the prior year.\n\nPatent litigation continues across multiple jurisdictions. Regulatory\nexposure includes pending antitrust reviews. Margin pressure from\ncomponent pricing remains. Forward guidance is unchanged.",
+  "control_results": [
+    {
+      "control_id": "C3.1",
+      "kind": "check",
+      "source_date": "2023-03-15",
+      "source_age_days": 1138,
+      "max_age_days": 120,
+      "freshness_pass": false,
+      "passed": false
+    },
+    {
+      "control_id": "C1.1",
+      "kind": "check",
+      "grounding_score": 1.0,
+      "unsupported_sentences": [],
+      "total_sentences": 9,
+      "passed": true
+    },
+    {
+      "control_id": "C2.1",
+      "kind": "check",
+      "coverage_map": {
+        "litigation": true,
+        "liquidity": false,
+        "margin_pressure": true,
+        "forward_guidance": true,
+        "regulatory": true
+      },
+      "missing_categories": [
+        "liquidity"
+      ],
+      "passed": false
+    },
+    {
+      "control_id": "C1.2",
+      "kind": "human",
+      "owner": "senior_reviewer",
+      "signed_by": null,
+      "status": "PENDING_SENIOR_REVIEW",
+      "passed": false
+    },
+    {
+      "control_id": "C4.2",
+      "kind": "human",
+      "owner": "analyst",
+      "signed_by": null,
+      "status": "PENDING_ANALYST_REVIEW",
+      "passed": false
+    },
+    {
+      "control_id": "C6.1",
+      "kind": "routing",
+      "escalated": false,
+      "revise": false,
+      "escalation_reasons": [],
+      "revise_reasons": [
+        "missing_one_required_category"
+      ],
+      "escalation_target": null,
+      "passed": true
+    },
+    {
+      "control_id": "C5.1",
+      "kind": "housekeeping",
+      "evidence_written": true,
+      "note": "evidence pack written for run-20260427T030734Z-e74726",
+      "passed": true
+    }
+  ],
+  "reviewer_id": null,
+  "reviewer_decision": "REJECT",
+  "reviewer_notes": null,
+  "escalation": null,
+  "final_status": "REJECTED"
+}

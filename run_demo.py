@@ -102,7 +102,7 @@ def main() -> None:
     for s in SCENARIOS:
         result = run(
             s["source"],
-            generation_mode = "openrouter",
+            #generation_mode = "openrouter",
             analyst_signoff=s["analyst"],
             senior_reviewer_signoff=s["senior"],
             reviewer_notes=s["reviewer_notes"],

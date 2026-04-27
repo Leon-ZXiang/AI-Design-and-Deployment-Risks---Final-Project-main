@@ -91,19 +91,31 @@ flowchart TD
     K --> L[dashboard.py\nartifacts/dashboard.html]
 ```
 
+## Generation modes
+
+The pipeline has two generation modes. The mode only affects how the draft is
+produced — all 7 controls, the release-gate logic, and the evidence pack run
+identically in both modes.
+
+| Mode | How it works | When to use |
+| --- | --- | --- |
+| **`stub`** (default) | Deterministic extractive summarizer — picks key sentences directly from the source text. No API key needed. Always produces the same output for the same input, so the frozen case outcomes (APPROVED / REVISE / ESCALATED) are guaranteed. | Offline testing, CI, validation suite |
+| **`openrouter`** | Calls a live LLM via the OpenRouter API. Requires an API key in `API.txt`. A real model may phrase things differently from the stub, so grounding scores may vary slightly from the frozen examples. | Demo with live LLM output |
+
 ## How to run
 
 ```bash
-pip install -r requirements.txt          # pyyaml only — works offline with stub mode
-python run_demo.py                       # runs 3 frozen cases, writes evidence/*.json
+pip install -r requirements.txt          # installs pyyaml + requests
+python -m tests.test_scenarios           # stub mode — verifies all 3 frozen outcomes offline
+python run_demo.py                       # openrouter mode — live LLM, writes evidence/*.json
 python -m src.dashboard                  # regenerates artifacts/dashboard.html
 ```
 
 Open `artifacts/dashboard.html` in a browser to see the governance dashboard.
 
-> `run_demo.py` defaults to `generation_mode="openrouter"`. To run fully
-> offline without an API key, change line 104 in `run_demo.py` to
-> `generation_mode="stub"`, or use the validation suite which always uses stub.
+> `run_demo.py` uses `generation_mode="openrouter"` and requires a key in
+> `API.txt`. For a fully offline run without an API key, use
+> `python -m tests.test_scenarios` (stub mode) which also writes evidence packs.
 
 ## Frozen sample cases
 
@@ -118,14 +130,15 @@ public-disclosure structure but are not real SEC filings.
 
 ### Evidence files per case
 
-Running `python run_demo.py` writes one JSON evidence pack per case to
-`evidence/`. Example paths and contents:
+Each run writes one JSON evidence pack per case to `evidence/`. File names
+embed a UTC timestamp and a 6-character run ID — they are regenerated on every
+run. The three packs from the current test run are:
 
 ```
 evidence/
-├── run-20260426T190327Z-a4a172.json    ← Case 1 Microsoft (APPROVED)
-├── run-20260426T190427Z-f2dc8d.json    ← Case 2 Apple (REVISE)
-└── run-20260426T190504Z-484d3e.json    ← Case 3 Nvidia (ESCALATED)
+├── run-20260427T030524Z-51411a.json    ← Case 1 Microsoft (APPROVED)
+├── run-20260427T030524Z-249a38.json    ← Case 2 Apple (REVISE)
+└── run-20260427T030524Z-2ac507.json    ← Case 3 Nvidia (ESCALATED)
 ```
 
 Each pack follows this schema:
@@ -274,7 +287,9 @@ Three-line MRM story:
 
 | Contributor | Role | Contributions |
 | --- | --- | --- |
-| Leon Xiang | Lead developer | System architecture, all Python source modules (`src/`), control implementations, evidence packing, dashboard, governance artifacts (LoD1/2/3), sample case design, test suite |
+| Leon Xiang | Developer | System architecture, all Python source modules (`src/`), control implementations, evidence packing, dashboard, sample case design, test suite |
+| Riza Cepni | Governance designer | LoD1/2/3 artifact design and authorship, control matrix design (`artifacts/control_matrix.yaml`), risk framing and governance framework |
+| Both | Validation | Scenario design, outcome verification, submission review |
 
 > This project was developed as part of ME575 AI Design and Deployment Risks
 > at George Mason University. All code commits are attributed in the git
