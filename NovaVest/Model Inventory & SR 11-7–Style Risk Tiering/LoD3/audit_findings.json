@@ -1,0 +1,103 @@
+{
+    "audit_metadata": {
+        "audit_date": "2026-04-26",
+        "auditor_id": "Internal Audit Team",
+        "models_audited": [
+            "384cca19-7811-426c-9254-430029e73c6f"
+        ],
+        "audit_scope": "Model Risk Management Compliance & Effectiveness"
+    },
+    "documentation_findings": {
+        "384cca19-7811-426c-9254-430029e73c6f": []
+    },
+    "tiering_reproducibility_findings": {
+        "384cca19-7811-426c-9254-430029e73c6f": {
+            "recomputed_score": 28,
+            "recomputed_tier": "Tier 1",
+            "recorded_official_score": 28,
+            "recorded_official_tier": "Tier 1",
+            "tier_match": true,
+            "score_match": true,
+            "explanation": "Recomputed using logic version 'Apex Financial_MRM_Tiering_v2.1'. Score breakdown: decision_criticality: High - Direct impact on customer financial outcomes and regulatory compliance = 10 points; data_sensitivity: Sensitive - Non-regulated PII or confidential business data = 5 points; automation_level: Semi-Automated - Model output requires human review before decision = 4 points"
+        }
+    },
+    "control_compliance_findings": {
+        "384cca19-7811-426c-9254-430029e73c6f": {
+            "missing_required_controls_in_status": [],
+            "overdue_controls": [],
+            "incomplete_controls": [
+                "Control VAL_T1_001 (Full Scope Independent Validation) is 'In Progress'",
+                "Control MON_T1_002 (Frequent Performance Monitoring) is 'In Progress'",
+                "Control GOV_T1_004 (Senior Management Approval & Oversight) is 'In Progress'",
+                "Control DATA_T1_005 (Data Quality & Governance) is 'In Progress'",
+                "Control AUDIT_T1_006 (Regular Internal Audit Review) is 'In Progress'"
+            ],
+            "absent_evidence_controls": []
+        }
+    },
+    "control_status_details": {
+        "384cca19-7811-426c-9254-430029e73c6f": [
+            {
+                "control_id": "VAL_T1_001",
+                "control_name": "Full Scope Independent Validation",
+                "frequency": "Pre-implementation & Annually",
+                "owner_role": "MRM/Validation Team",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            },
+            {
+                "control_id": "MON_T1_002",
+                "control_name": "Frequent Performance Monitoring",
+                "frequency": "Daily/Weekly",
+                "owner_role": "Model Owner/Operations",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            },
+            {
+                "control_id": "DOC_T1_003",
+                "control_name": "Rigorous Documentation & Change Management",
+                "frequency": "Continuous",
+                "owner_role": "Model Owner/Developers",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            },
+            {
+                "control_id": "GOV_T1_004",
+                "control_name": "Senior Management Approval & Oversight",
+                "frequency": "Pre-implementation & Annually",
+                "owner_role": "Model Governance Committee",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            },
+            {
+                "control_id": "DATA_T1_005",
+                "control_name": "Data Quality & Governance",
+                "frequency": "Continuous",
+                "owner_role": "Data Governance/Model Owner",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            },
+            {
+                "control_id": "AUDIT_T1_006",
+                "control_name": "Regular Internal Audit Review",
+                "frequency": "Biennially",
+                "owner_role": "Internal Audit",
+                "status": "Status to be determined",
+                "evidence": "",
+                "notes": ""
+            }
+        ]
+    },
+    "summary_statistics": {
+        "total_models_audited": 1,
+        "models_with_documentation_issues": 0,
+        "total_documentation_findings": 0,
+        "models_with_tiering_discrepancies": 0,
+        "models_with_control_gaps": 1
+    }
+}
