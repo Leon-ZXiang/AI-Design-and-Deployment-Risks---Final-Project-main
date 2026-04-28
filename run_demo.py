@@ -115,6 +115,4 @@ def main(generation_mode: str = "stub") -> None:
 
 
 if __name__ == "__main__":
-    import sys
-    mode = sys.argv[1] if len(sys.argv) > 1 else "stub"
-    main(generation_mode=mode)
+    main(generation_mode="openrouter")
