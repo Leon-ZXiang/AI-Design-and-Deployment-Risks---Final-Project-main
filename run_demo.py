@@ -99,10 +99,14 @@ def _print_result(name: str, result: dict) -> None:
 
 
 def main() -> None:
-    for s in SCENARIOS:
+    import time
+    for i, s in enumerate(SCENARIOS):
+        if i > 0:
+            print("Waiting 60s for OpenRouter rate-limit window to reset...")
+            time.sleep(60)
         result = run(
             s["source"],
-            #generation_mode = "openrouter",
+            generation_mode = "openrouter",
             analyst_signoff=s["analyst"],
             senior_reviewer_signoff=s["senior"],
             reviewer_notes=s["reviewer_notes"],

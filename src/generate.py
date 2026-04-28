@@ -154,7 +154,7 @@ _JUDGE_PROMPT = (
 )
 
 
-def make_openrouter_judge() -> Callable[[str, str], bool]:
+def make_openrouter_judge(*, max_retries: int = 5, base_delay: float = 5.0) -> Callable[[str, str], bool]:
     """Return an LLM-as-judge callable for C1.1 semantic grounding.
 
     The returned function accepts (sentence, source_text) and returns True
@@ -163,6 +163,7 @@ def make_openrouter_judge() -> Callable[[str, str], bool]:
     """
     try:
         import requests  # type: ignore
+        import time
     except ImportError as e:
         raise RuntimeError("openrouter mode requires `pip install requests`") from e
 
@@ -188,13 +189,25 @@ def make_openrouter_judge() -> Callable[[str, str], bool]:
             "temperature": 0.0,
             "max_tokens": 5,
         }
-        resp = requests.post(
-            url=f"{OPENROUTER_BASE_URL}/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}"},
-            json=payload,
-        )
-        resp.raise_for_status()
-        answer = (resp.json()["choices"][0]["message"]["content"] or "").strip().upper()
-        return answer.startswith("YES")
+        for attempt in range(max_retries):
+            resp = requests.post(
+                url=f"{OPENROUTER_BASE_URL}/chat/completions",
+                headers={"Authorization": f"Bearer {api_key}"},
+                json=payload,
+            )
+            if resp.status_code == 429:
+                wait = base_delay * (2 ** attempt)
+                retry_after = resp.headers.get("Retry-After")
+                if retry_after:
+                    wait = max(wait, float(retry_after))
+                print(f"[openrouter judge] rate limited, retrying in {wait:.0f}s (attempt {attempt + 1}/{max_retries})...")
+                time.sleep(wait)
+                continue
+            resp.raise_for_status()
+            answer = (resp.json()["choices"][0]["message"]["content"] or "").strip().upper()
+            return answer.startswith("YES")
+        # exhausted retries — treat as unsupported to be conservative
+        print("[openrouter judge] rate limit exceeded, marking sentence as unsupported")
+        return False
 
     return judge
