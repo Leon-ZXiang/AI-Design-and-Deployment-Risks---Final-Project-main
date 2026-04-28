@@ -98,15 +98,15 @@ def _print_result(name: str, result: dict) -> None:
     print()
 
 
-def main() -> None:
+def main(generation_mode: str = "stub") -> None:
     import time
     for i, s in enumerate(SCENARIOS):
-        if i > 0:
-            print("Waiting 60s for OpenRouter rate-limit window to reset...")
-            time.sleep(60)
+        if i > 0 and generation_mode == "openrouter":
+            print("Waiting 10s for OpenRouter rate-limit window...")
+            time.sleep(10)
         result = run(
             s["source"],
-            generation_mode = "openrouter",
+            generation_mode=generation_mode,
             analyst_signoff=s["analyst"],
             senior_reviewer_signoff=s["senior"],
             reviewer_notes=s["reviewer_notes"],
@@ -115,4 +115,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    mode = sys.argv[1] if len(sys.argv) > 1 else "stub"
+    main(generation_mode=mode)
