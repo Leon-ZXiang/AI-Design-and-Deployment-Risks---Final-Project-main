@@ -115,4 +115,5 @@ def main(generation_mode: str = "stub") -> None:
 
 
 if __name__ == "__main__":
+    #main(generation_mode="stub")  
     main(generation_mode="openrouter")
