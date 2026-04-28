@@ -355,3 +355,39 @@ python -c "from src.workflow import run; print(run('data/sources/microsoft_10q_e
 | Dashboard                   | `src/dashboard.py`, `artifacts/dashboard.html` |
 | Lab artifacts (LoD1/2/3)    | `artifacts/lod/` |
 | Validation suite            | `tests/test_scenarios.py`, `tests/promptfooconfig.yaml` |
+
+## Project tasklist
+
+### Governance and report — Riza
+
+- Finalize narrowed project scope
+- Complete LoD1 owner registration artifact
+- Complete LoD2 MRM tiering and required controls artifacts
+- Complete LoD3 audit findings artifacts
+- Draft governance and risk management report
+- Align governance report to final repo implementation
+- Finalize report after final slide/repo review
+- Review final presentation wording for governance consistency
+
+### Implementation and repo — Leon
+
+- Build repo structure and README
+- Implement workflow pipeline
+- Implement control checks (grounding, coverage, freshness)
+- Implement release decision logic
+- Implement evidence-pack generation
+- Build governance dashboard
+- Prepare frozen sample cases
+- Final repo cleanup and presentation-ready screenshots
+- Confirm final evidence folders and artifact naming
+
+### Joint work — Riza and Leon
+
+- Freeze final system definition
+- Freeze final sample cases and statuses
+- Freeze final decision logic
+- Review LoD1 / LoD2 / LoD3 consistency
+- Finalize PowerPoint presentation
+- Add contribution visibility to submission materials
+- Rehearse final presentation flow
+- Prepare Q&A responses for likely professor questions
