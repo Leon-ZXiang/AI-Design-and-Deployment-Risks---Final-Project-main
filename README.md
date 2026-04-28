@@ -4,7 +4,7 @@
 > AI-assisted financial research summary workflow for internal analysts at
 > NovaVest. It ingests public company disclosures (SEC filings, earnings
 > transcripts), generates first-draft summaries via LLM, runs 7 mandatory
-> controls, collects human sign-offs, and routes each run to one of four
+> controls, collects human sign-offs, and routes each run to one of five
 > release outcomes before the output can be used beyond draft support.
 
 Implementation of the frozen NovaVest spec — controls, sample cases, decision
@@ -99,8 +99,8 @@ identically in both modes.
 
 | Mode | How it works | When to use |
 | --- | --- | --- |
-| **`stub`** (default) | Deterministic extractive summarizer — picks key sentences directly from the source text. No API key needed. Always produces the same output for the same input, so the frozen case outcomes (APPROVED / REVISE / ESCALATED) are guaranteed. | Offline testing, CI, validation suite |
-| **`openrouter`** | Calls a live LLM via the OpenRouter API. Requires an API key in `API.txt`. A real model may phrase things differently from the stub, so grounding scores may vary slightly from the frozen examples. | Demo with live LLM output |
+| **`stub`** (default) | Deterministic extractive summarizer — picks key sentences directly from the source text. No API key needed. Always produces the same output for the same input, so the frozen case outcomes (APPROVED / REVISE / ESCALATED) are guaranteed. | Offline testing, automated test suite |
+| **`openrouter`** | Calls a live LLM via the OpenRouter API. Requires an API key in `API.txt`. Token-mismatched sentences are re-evaluated by an LLM semantic judge, so paraphrases are handled. Grounding scores may still vary slightly from the frozen examples as the live model may produce different summaries. | Demo with live LLM output |
 
 ## How to run
 
@@ -190,7 +190,7 @@ Decision logic is in `src/review.py` → `decide_release()`. Priority order:
 
 | Priority | Outcome | Condition (exact code logic) |
 | --- | --- | --- |
-| 1 | **REJECTED** | Any `kind="check"` control with `gate="hard"` has `passed=False` — i.e., C3.1 (age > 120 days) or C1.1 (grounding_score < 0.90 **and** unsupported sentences present) |
+| 1 | **REJECTED** | Any `kind="check"` control with `gate="hard"` has `passed=False` — i.e., C3.1 (age > 120 days) or C1.1 (grounding_score < 0.90 **or** unsupported sentences present) |
 | 2 | **ESCALATED** | C6.1 trigger fires: grounding_score < 0.80 OR unsupported_claim_count > 0; OR missing_categories ≥ 2 |
 | 3 | **REVISE** | Exactly 1 missing required risk category (and no escalation trigger) |
 | 4 | **APPROVED** | No hard fails, no escalation trigger, no missing categories, **both** analyst_signoff **and** senior_reviewer_signoff provided |
